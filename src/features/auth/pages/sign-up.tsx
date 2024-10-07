@@ -28,7 +28,7 @@ const initialValue: LoginPayload = {
   password: '',
 };
 
-const SignIn: React.FC = () => {
+const SignUp: React.FC = () => {
   const classes = LoginStyle();
   const dispatch = useDispatch();
   const [isShowpassword, setIsShowPassword] = useState(false);
@@ -136,4 +136,4 @@ const SignIn: React.FC = () => {
   );
 };
 
-export default React.memo(SignIn);
+export default React.memo(SignUp);
