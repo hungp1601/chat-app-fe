@@ -3,15 +3,21 @@ import { User } from '../../models/user';
 import { getToken, getUser } from '../../repositories/localStorage/get';
 
 export interface AuthState {
-  isLoggedIn: boolean,
-  logging?: boolean,
-  errors: string,
-  currentUser?: User,
+  isLoggedIn: boolean;
+  logging?: boolean;
+  errors: string;
+  currentUser?: User;
 }
 
 export interface LoginPayload {
-  email: string,
-  password: string,
+  email: string;
+  password: string;
+}
+
+export interface SignUpPayload {
+  email: string;
+  password: string;
+  name: string;
 }
 
 const initialState: AuthState = {
@@ -19,39 +25,42 @@ const initialState: AuthState = {
   logging: false,
   errors: '',
   currentUser: getUser() || undefined,
-}
+};
 
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
+    signup(state, action: PayloadAction<User>) {
+      state.logging = true;
+    },
+
     login(state, action: PayloadAction<string>) {
-      state.logging = true
+      state.logging = true;
     },
 
     loginSuccess(state, action: PayloadAction<User>) {
-      state.logging = false
-      state.isLoggedIn = true
-      state.errors = ''
-      state.currentUser = action.payload
+      state.logging = false;
+      state.isLoggedIn = true;
+      state.errors = '';
+      state.currentUser = action.payload;
     },
 
     loginFailed(state, action: PayloadAction<string>) {
-      state.logging = false
-      state.errors = action.payload
+      state.logging = false;
+      state.errors = action.payload;
     },
 
     logout(state) {
-      state.errors = ''
-      state.logging = false
-      state.isLoggedIn = false
-      state.currentUser = undefined
+      state.errors = '';
+      state.logging = false;
+      state.isLoggedIn = false;
+      state.currentUser = undefined;
     },
-  }
-})
+  },
+});
 
-export const authAction = authSlice.actions
+export const authAction = authSlice.actions;
 
-const authReducer = authSlice.reducer
-export default authReducer
-
+const authReducer = authSlice.reducer;
+export default authReducer;

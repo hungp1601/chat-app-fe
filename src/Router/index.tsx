@@ -17,6 +17,7 @@ const RouterComponent: React.FC = () => {
       <Switch>
         <Redirect exact from="/" to="/list" />
         {listRouter.map((subRouter: router) => {
+          console.log({ subRouter });
           if (subRouter.auth) {
             return (
               <RoutePrivate
@@ -32,7 +33,7 @@ const RouterComponent: React.FC = () => {
               key={subRouter.key}
               exact
               path={subRouter.path}
-              component={lazy(() => import('../containers/login'))}
+              component={lazy(() => import('../containers/' + subRouter.component))}
             />
           );
         })}

@@ -83,7 +83,7 @@ export const listRouter: Array<router> = [
     key: 10,
     path: '/sign-up',
     component: 'sign-up',
-    auth: true,
+    auth: false,
   },
 ];
 

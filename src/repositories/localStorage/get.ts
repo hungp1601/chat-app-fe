@@ -1,12 +1,9 @@
 const getUser = () => {
-	return JSON.parse(<string>localStorage.getItem("user"))
-}
+  return JSON.parse(localStorage.getItem('user') as string);
+};
 
-const getToken= () => {
-	return localStorage.getItem("token")
-}
+const getToken = () => {
+  return localStorage.getItem('token');
+};
 
-export {
-	getUser,
-	getToken,
-}
+export { getUser, getToken };

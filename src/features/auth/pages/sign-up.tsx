@@ -17,14 +17,15 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
 import LoginStyle from '../styles/login';
 import { useDispatch, useSelector } from 'react-redux';
-import { authAction, LoginPayload } from '../authSlice';
+import { authAction, SignUpPayload } from '../authSlice';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { RootState } from '../../../app/store';
 import Alert from '@material-ui/lab/Alert';
 
-const initialValue: LoginPayload = {
+const initialValue: SignUpPayload = {
   email: '',
+  name: '',
   password: '',
 };
 
@@ -35,7 +36,7 @@ const SignUp: React.FC = () => {
   const auth = useSelector((state: RootState) => state.auth);
   const handleSubmitForm = useCallback(
     (value) => {
-      dispatch(authAction.login(value));
+      dispatch(authAction.signup(value));
     },
     [dispatch]
   );
@@ -45,7 +46,13 @@ const SignUp: React.FC = () => {
 
   const schema = Yup.object().shape({
     email: Yup.string().required('Hãy nhập email').email('Hãy nhập định dạng email'),
-    password: Yup.string().required('Hãy nhập số mật khẩu'),
+    password: Yup.string()
+      .required('Hãy nhập mật khẩu')
+      .min(8, 'Mật khẩu phải có ít nhất 8 ký tự')
+      .matches(/[A-Z]/, 'Mật khẩu phải có ít nhất một chữ cái viết hoa')
+      .matches(/[a-z]/, 'Mật khẩu phải có ít nhất một chữ cái thường')
+      .matches(/\d/, 'Mật khẩu phải có ít nhất một chữ số'),
+    name: Yup.string().required('Hãy nhập tên tài khoản'),
   });
 
   return (
@@ -56,7 +63,7 @@ const SignUp: React.FC = () => {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Đăng nhập
+          Đăng ký
         </Typography>
         {auth.errors && (
           <Alert severity="error" onClose={() => {}}>
@@ -92,6 +99,20 @@ const SignUp: React.FC = () => {
                 variant="outlined"
                 margin="normal"
                 fullWidth
+                id="name"
+                label="Tên tài khoản"
+                name="name"
+                autoComplete="name"
+                placeholder="Tên tài khoản"
+                error={!!props.errors.name}
+                helperText={props.errors.name}
+                autoFocus
+              />
+              <Field
+                as={TextField}
+                variant="outlined"
+                margin="normal"
+                fullWidth
                 name="password"
                 label="Mật khẩu"
                 placeholder="Nhập mật khẩu"
@@ -108,10 +129,7 @@ const SignUp: React.FC = () => {
                   ),
                 }}
               />
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Lưu thông tin đăng nhập"
-              />
+
               <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit}>
                 {auth.logging ? <CircularProgress color={'inherit'} /> : 'Đăng nhập'}
               </Button>
@@ -122,8 +140,8 @@ const SignUp: React.FC = () => {
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link href="/sign-up" variant="body2">
-                    {'Bạn chưa có tài khoản? Đăng ký ngay'}
+                  <Link href="/login" variant="body2">
+                    {'Bạn da có tài khoản? Đăng nhập ngay'}
                   </Link>
                 </Grid>
               </Grid>
