@@ -1,12 +1,10 @@
 import React, { useCallback, useState } from 'react';
-import Checkbox from '@material-ui/core/Checkbox';
 import {
   Link,
   Grid,
   Box,
   Typography,
   Container,
-  FormControlLabel,
   TextField,
   CssBaseline,
   Button,

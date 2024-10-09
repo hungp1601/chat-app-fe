@@ -8,6 +8,7 @@ import { setToken, setUser } from '../../repositories/localStorage/set';
 import { User } from '../../models/user';
 import { push } from 'connected-react-router';
 import { clearToken, clearUser } from '../../repositories/localStorage/clear';
+import { all } from 'redux-saga/effects';
 
 const put: any = Effects.put;
 const call: any = Effects.call;
@@ -111,7 +112,6 @@ function* listenSignUpFlow() {
 }
 
 export default function* authSaga() {
-  yield fork(listenLoginFlow);
-  yield fork(listenSignUpFlow);
+  yield all([listenLoginFlow(), listenSignUpFlow()]);
   // yield takeEvery(authAction.login.toString(), handleLogin)
 }

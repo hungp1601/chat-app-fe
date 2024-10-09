@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import PlayerComponent from '../features/player'
+import PlayerComponent from '../features/player';
 import { Song } from '../constants';
 import backGround from '../assets/images/10.jpg';
 
@@ -10,9 +10,9 @@ const Player: React.FC = () => {
     avatarThumbnail: backGround,
     singer: 'singer',
     playing: false,
-    like: true
-  })
-  return <PlayerComponent song={song} />
-}
+    like: true,
+  });
+  return <PlayerComponent song={song} />;
+};
 
-export default React.memo(Player)
+export default React.memo(Player);

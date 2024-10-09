@@ -8,7 +8,7 @@ import { EventChannel, eventChannel, Task } from 'redux-saga';
 import { getToken, getUser } from '../../repositories/localStorage/get';
 import conversationAPI from '../../api/conversationAPI';
 import { takeEvery } from '@redux-saga/core/effects';
-import { message } from '../../firebase';
+// import { message } from '../../firebase';
 
 const put: any = Effects.put;
 const call: any = Effects.call;
@@ -24,24 +24,24 @@ function connect() {
   const token = getAccessToken();
   const url = process.env.REACT_APP_SOCKET_URL ?? '';
   const socket = io(url, {
-    query: { token }
+    query: { token },
   });
 
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     socket.on('connect', () => {
       // socket.emit('room', 'room1');
       resolve(socket);
     });
-  })
+  });
 }
 
 function subscribe(socket: Socket) {
-  return eventChannel(emitter => {
+  return eventChannel((emitter) => {
     socket.on('message-received', (message) => {
       emitter(chatActions.sendMessageSuccess(message));
     });
 
-    socket.on('disconnect', e => {
+    socket.on('disconnect', (e) => {
       // TODO: handle
     });
 
@@ -61,9 +61,9 @@ function* read(socket: Socket) {
 
 function* send(socket: Socket) {
   while (true) {
-    const { payload } = yield take(chatActions.sendMessage.type)
+    const { payload } = yield take(chatActions.sendMessage.type);
 
-    socket.emit('messages', payload)
+    socket.emit('messages', payload);
   }
 }
 
@@ -73,13 +73,12 @@ function* handleIO(socket: Socket) {
 }
 
 function* flowSocket() {
-  const socket: Socket = yield call(connect)
+  const socket: Socket = yield call(connect);
 
-  const task: Task = yield fork(handleIO, socket)
+  const task: Task = yield fork(handleIO, socket);
 
-  yield take(authAction.logout.type)
-  yield cancel(task)
-
+  yield take(authAction.logout.type);
+  yield cancel(task);
 }
 
 /**
@@ -97,8 +96,8 @@ interface ResponseConversation {
     email: string | null;
     createAt: Date | string | null;
     updateAt: Date | string | null;
-    conversations: Conversation[]
-  }
+    conversations: Conversation[];
+  };
 }
 
 interface ResponseMessages {
@@ -106,14 +105,14 @@ interface ResponseMessages {
     page_total: number;
     results: Message[];
     total: number;
-  }
+  };
 }
 function* handleGetListConversation() {
   const token = getAccessToken();
-  const response: ResponseConversation = yield call(conversationAPI.getAll, token)
+  const response: ResponseConversation = yield call(conversationAPI.getAll, token);
   const { conversations } = response.data;
 
-  yield put(chatActions.requestConversationSuccess(conversations))
+  yield put(chatActions.requestConversationSuccess(conversations));
 }
 //end handleGetListConversation
 
@@ -127,15 +126,17 @@ function* handleGetListMessages(action: PayloadAction<RequestMessage>) {
     conversationAPI.getAllMessage,
     token,
     action.payload.conversation_id,
-    action.payload.page,
-  )
+    action.payload.page
+  );
 
-  yield put(chatActions.requestMessagesSuccess({
-    messages: response.data.results,
-    page: action.payload.page,
-    total: response.data.total,
-    scrollHeight: action.payload.scrollHeight,
-  }))
+  yield put(
+    chatActions.requestMessagesSuccess({
+      messages: response.data.results,
+      page: action.payload.page,
+      total: response.data.total,
+      scrollHeight: action.payload.scrollHeight,
+    })
+  );
 }
 
 function* handleUpdateLastMessage(action: PayloadAction<UpdateLastMessage>) {
@@ -145,32 +146,32 @@ function* handleUpdateLastMessage(action: PayloadAction<UpdateLastMessage>) {
     token,
     action.payload.conversation_id,
     action.payload.user_id,
-    action.payload.message_id,
-  )
+    action.payload.message_id
+  );
 
   console.log(response, 22222);
 }
 
 function* flow() {
   while (true) {
-    const isLoggedIn = Boolean(getToken())
+    const isLoggedIn = Boolean(getToken());
     const currentUser = Boolean(getUser());
 
-    yield takeEvery(chatActions.requestConversation, handleGetListConversation)
+    yield takeEvery(chatActions.requestConversation, handleGetListConversation);
 
-    yield takeEvery(chatActions.requestMessages, handleGetListMessages)
+    yield takeEvery(chatActions.requestMessages, handleGetListMessages);
 
-    yield takeEvery(chatActions.updateLastMessage, handleUpdateLastMessage)
+    yield takeEvery(chatActions.updateLastMessage, handleUpdateLastMessage);
 
     if (isLoggedIn && currentUser) {
-      yield call(flowSocket)
+      yield call(flowSocket);
     } else {
-      yield take(authAction.loginSuccess)
-      yield call(flowSocket)
+      yield take(authAction.loginSuccess);
+      yield call(flowSocket);
     }
   }
 }
 
 export default function* chatSaga() {
-  yield fork(flow)
+  yield fork(flow);
 }

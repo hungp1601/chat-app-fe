@@ -1,5 +1,5 @@
 import axiosClient from './axiosClient';
-import { Post } from '../features/posts/redux/postSlice';
+// import { Post } from '../features/posts/redux/postSlice';
 
 const postAPI = {
   getAll(accessToken: string) {
