@@ -1,27 +1,22 @@
-import * as Effects from 'redux-saga/effects';
+import { all, put, call, fork, take } from 'redux-saga/effects';
 import { PayloadAction } from '@reduxjs/toolkit';
 import { authAction, LoginPayload, SignUpPayload } from './authSlice';
 import authApi from '../../api/authApi';
 import { AxiosResponse } from 'axios';
-import { getToken, getUser } from '../../repositories/localStorage/get';
-import { setToken, setUser } from '../../repositories/localStorage/set';
+import { getToken, getUser, getRefreshToken } from '../../repositories/localStorage/get';
+import { setToken, setUser, setRefreshToken } from '../../repositories/localStorage/set';
 import { User } from '../../models/user';
 import { push } from 'connected-react-router';
 import { clearToken, clearUser } from '../../repositories/localStorage/clear';
-import { all } from 'redux-saga/effects';
-
-const put: any = Effects.put;
-const call: any = Effects.call;
-const fork: any = Effects.fork;
-const take: any = Effects.take;
 
 function* handleLogin(payload: LoginPayload) {
   try {
     const response: AxiosResponse = yield call(authApi.login, payload);
     console.log({ response });
 
-    const { token, user } = response.data;
+    const { token, user, refreshToken } = response.data;
     setToken(token);
+    setRefreshToken(refreshToken);
     const newUser: User = {
       id: user.id,
       email: user.email,
@@ -48,8 +43,9 @@ function* handleSignUp(payload: SignUpPayload) {
     const response: AxiosResponse = yield call(authApi.signup, payload);
     console.log({ response });
 
-    const { token, user } = response.data;
+    const { token, user, refreshToken } = response.data;
     setToken(token);
+    setRefreshToken(refreshToken);
     const newUser: User = {
       id: user.id,
       email: user.email,

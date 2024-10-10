@@ -6,4 +6,8 @@ const getToken = () => {
   return localStorage.getItem('token');
 };
 
-export { getUser, getToken };
+const getRefreshToken = () => {
+  return localStorage.getItem('refreshToken');
+};
+
+export { getUser, getToken, getRefreshToken };

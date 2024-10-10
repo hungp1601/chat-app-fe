@@ -35,7 +35,7 @@ const SignIn: React.FC = () => {
   const auth = useSelector((state: RootState) => state.auth);
   const handleSubmitForm = useCallback(
     (value) => {
-      dispatch(authAction.signup(value));
+      dispatch(authAction.login(value));
     },
     [dispatch]
   );

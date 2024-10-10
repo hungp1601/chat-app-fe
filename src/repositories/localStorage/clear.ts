@@ -1,12 +1,13 @@
 const clearToken = () => {
-	localStorage.removeItem('token')
-}
+  localStorage.removeItem('token');
+};
 
-const clearUser= () => {
-	localStorage.removeItem('user')
-}
+const clearUser = () => {
+  localStorage.removeItem('user');
+};
 
-export {
-	clearToken,
-	clearUser,
-}
+const clearRefreshToken = () => {
+  localStorage.removeItem('refreshToken');
+};
+
+export { clearToken, clearUser, clearRefreshToken };

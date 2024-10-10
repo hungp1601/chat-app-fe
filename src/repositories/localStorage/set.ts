@@ -1,12 +1,13 @@
 const setUser = (user: any) => {
-	localStorage.setItem("user", JSON.stringify(user));
-}
+  localStorage.setItem('user', JSON.stringify(user));
+};
 
 const setToken = (token: any) => {
-	localStorage.setItem("token", token);
-}
+  localStorage.setItem('token', token);
+};
 
-export {
-	setUser,
-	setToken,
-}
+const setRefreshToken = (refreshToken: any) => {
+  localStorage.setItem('refreshToken', refreshToken);
+};
+
+export { setUser, setToken, setRefreshToken };

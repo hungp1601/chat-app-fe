@@ -17,7 +17,6 @@ const RouterComponent: React.FC = () => {
       <Switch>
         <Redirect exact from="/" to="/list" />
         {listRouter.map((subRouter: router) => {
-          console.log({ subRouter });
           if (subRouter.auth) {
             return (
               <RoutePrivate
