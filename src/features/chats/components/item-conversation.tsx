@@ -69,7 +69,7 @@ const Index: React.FC<Props> = (props) => {
         <Avatar alt="Profile Picture" src={Anh10} />
       </ListItemAvatar>
     );
-  }, [conversation.users]);
+  }, [classes.avatarMargin, classes.smallAvatar, conversation.users.length]);
 
   const renderText = useCallback(() => {
     if (!props.conversation.active && unread) {
@@ -92,7 +92,7 @@ const Index: React.FC<Props> = (props) => {
 
   const handleExpandClick = useCallback(() => {
     props.handleClick(conversation.id);
-  }, [conversation]);
+  }, [conversation.id, props]);
 
   return (
     <List onClick={handleExpandClick}>

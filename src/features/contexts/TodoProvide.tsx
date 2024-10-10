@@ -112,12 +112,13 @@ const TodoProvide: React.FC = ({ children }) => {
 
   const updateTodo = useCallback(
     (id: number) => {
-      todos.filter((todo: ITodo) => {
+      const updatedTodos = todos.map((todo: ITodo) => {
         if (todo.id === id) {
-          todo.status = !todo.status;
-          setTodos([...todos]);
+          return { ...todo, status: !todo.status };
         }
+        return todo;
       });
+      setTodos(updatedTodos);
     },
     [todos]
   );

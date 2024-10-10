@@ -20,6 +20,10 @@ export interface SignUpPayload {
   name: string;
 }
 
+export interface RefreshTokenPayload {
+  token: string;
+}
+
 const initialState: AuthState = {
   isLoggedIn: Boolean(getToken()),
   logging: false,
@@ -36,6 +40,10 @@ const authSlice = createSlice({
     },
 
     login(state, action: PayloadAction<string>) {
+      state.logging = true;
+    },
+
+    refreshToken(state, action: PayloadAction<>) {
       state.logging = true;
     },
 

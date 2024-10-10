@@ -3,20 +3,21 @@ import { PayloadAction } from '@reduxjs/toolkit';
 import { authAction, LoginPayload, SignUpPayload } from './authSlice';
 import authApi from '../../api/authApi';
 import { AxiosResponse } from 'axios';
-import { getToken, getUser, getRefreshToken } from '../../repositories/localStorage/get';
+import { getRefreshToken, getToken, getUser } from '../../repositories/localStorage/get';
 import { setToken, setUser, setRefreshToken } from '../../repositories/localStorage/set';
 import { User } from '../../models/user';
 import { push } from 'connected-react-router';
-import { clearToken, clearUser } from '../../repositories/localStorage/clear';
+import { clearRefreshToken, clearToken, clearUser } from '../../repositories/localStorage/clear';
 
 function* handleLogin(payload: LoginPayload) {
   try {
     const response: AxiosResponse = yield call(authApi.login, payload);
-    console.log({ response });
 
     const { token, user, refreshToken } = response.data;
+
     setToken(token);
     setRefreshToken(refreshToken);
+    console.log({});
     const newUser: User = {
       id: user.id,
       email: user.email,
@@ -67,9 +68,60 @@ function* handleSignUp(payload: SignUpPayload) {
   }
 }
 
+function* handleRefreshToken() {
+  try {
+    const refreshToken = getRefreshToken();
+    if (!refreshToken) {
+      yield take(authAction.logout.type);
+      yield call(handleLogout);
+      return;
+    }
+    console.log('calling');
+    let response: AxiosResponse;
+    try {
+      response = yield call(authApi.refreshToken, { token: refreshToken });
+      console.log({ response });
+
+      const { token, user, refreshToken: newRefreshToken } = response.data;
+
+      setToken(token);
+      setRefreshToken(newRefreshToken);
+      const newUser: User = {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        status: user.status,
+        last_message_id: null,
+      };
+      setUser(newUser);
+      yield put(authAction.loginSuccess(newUser));
+    } catch (error: any) {
+      console.log('handleRefreshToken', error);
+      clearUser();
+      clearToken();
+      clearRefreshToken();
+      yield put(push('/sign-in'));
+    }
+  } catch (error: any) {
+    console.log('handleRefreshToken', error);
+    clearUser();
+    clearToken();
+    clearRefreshToken();
+    yield put(push('/sign-in'));
+  }
+}
+
+function* listenRefreshTokenFlow() {
+  while (true) {
+    yield take(authAction.refreshToken.type);
+    yield call(handleRefreshToken);
+  }
+}
+
 function* handleLogout() {
   clearUser();
   clearToken();
+  clearRefreshToken();
   yield put(push('/sign-in'));
 }
 
@@ -108,6 +160,5 @@ function* listenSignUpFlow() {
 }
 
 export default function* authSaga() {
-  yield all([listenLoginFlow(), listenSignUpFlow()]);
-  // yield takeEvery(authAction.login.toString(), handleLogin)
+  yield all([listenLoginFlow(), listenSignUpFlow(), listenRefreshTokenFlow()]);
 }
