@@ -76,32 +76,22 @@ function* handleRefreshToken() {
       yield call(handleLogout);
       return;
     }
-    console.log('calling');
-    let response: AxiosResponse;
-    try {
-      response = yield call(authApi.refreshToken, { token: refreshToken });
-      console.log({ response });
+    const response: AxiosResponse = yield call(authApi.refreshToken, { token: refreshToken });
+    console.log({ response });
 
-      const { token, user, refreshToken: newRefreshToken } = response.data;
+    const { token, user, refreshToken: newRefreshToken } = response.data;
 
-      setToken(token);
-      setRefreshToken(newRefreshToken);
-      const newUser: User = {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        status: user.status,
-        last_message_id: null,
-      };
-      setUser(newUser);
-      yield put(authAction.loginSuccess(newUser));
-    } catch (error: any) {
-      console.log('handleRefreshToken', error);
-      clearUser();
-      clearToken();
-      clearRefreshToken();
-      yield put(push('/sign-in'));
-    }
+    setToken(token);
+    setRefreshToken(newRefreshToken);
+    const newUser: User = {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      status: user.status,
+      last_message_id: null,
+    };
+    setUser(newUser);
+    yield put(authAction.loginSuccess(newUser));
   } catch (error: any) {
     console.log('handleRefreshToken', error);
     clearUser();

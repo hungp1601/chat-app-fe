@@ -43,7 +43,7 @@ const authSlice = createSlice({
       state.logging = true;
     },
 
-    refreshToken(state, action: PayloadAction<>) {
+    refreshToken(state) {
       state.logging = true;
     },
 

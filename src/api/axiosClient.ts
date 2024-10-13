@@ -35,6 +35,8 @@ axiosClient.interceptors.response.use(
     console.log({ errorMess, store });
     if (error.response?.status === 401 && errorMess === 'jwt expired') {
       store.dispatch(authAction.refreshToken());
+      return;
+      // return Promise.(error);
     }
     return Promise.reject(error);
   }
