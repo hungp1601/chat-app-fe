@@ -77,7 +77,6 @@ function* handleRefreshToken() {
       return;
     }
     const response: AxiosResponse = yield call(authApi.refreshToken, { token: refreshToken });
-    console.log({ response });
 
     const { token, user, refreshToken: newRefreshToken } = response.data;
 

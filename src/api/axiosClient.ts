@@ -1,6 +1,7 @@
 import { store } from 'app/store';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { authAction } from 'features/auth/authSlice';
+import { getToken } from 'repositories/localStorage/get';
 
 const axiosClient = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
@@ -28,15 +29,16 @@ axiosClient.interceptors.response.use(
     // Do something with response data
     return response.data;
   },
-  function (error) {
+  async function (error) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
-    const errorMess = error.response?.data?.message || error.message;
-    console.log({ errorMess, store });
-    if (error.response?.status === 401 && errorMess === 'jwt expired') {
-      store.dispatch(authAction.refreshToken());
-      return;
-      // return Promise.(error);
+    const originalRequest = error.config;
+    if (error.response.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      await store.dispatch(authAction.refreshToken());
+      const token = getToken();
+      originalRequest.headers['Authorization'] = `Bearer ${token}`;
+      return axiosClient(originalRequest);
     }
     return Promise.reject(error);
   }
